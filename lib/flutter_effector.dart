@@ -1,6 +1,7 @@
 library flutter_effector;
 
 import 'package:flutter/material.dart';
+import 'src/id.dart' show nextUnitID;
 
 part 'src/event.dart';
 part 'src/flutter.dart';
