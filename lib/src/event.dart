@@ -28,4 +28,4 @@ class _Event<T> extends Event<T> {
       _subscriptions.forEach((subscription) => subscription(value: value));
 }
 
-Event<T> createEvent<T>(String name) => _Event<T>(name);
+Event<T> createEvent<T>(String? name) => _Event<T>(name ?? nextUnitID());
