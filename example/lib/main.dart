@@ -14,9 +14,9 @@ final increment = createEvent('increment');
 final decrement = createEvent('decrement');
 final resetCounter = createEvent('reset counter');
 
-final counter = createStore(0)
-    .on(increment, (state) => state + 1)
-    .on(decrement, (state) => state - 1)
+final counter = createStore<int>(0)
+    .on<dynamic>(increment, (state, {message}) => state + 1)
+    .on<dynamic>(decrement, (state, {message}) => state - 1)
     .reset(resetCounter);
 
 class CounterScreen extends EffectorWidget {
@@ -31,15 +31,21 @@ class CounterScreen extends EffectorWidget {
           children: [
             Text(value.toString()),
             OutlinedButton(
-              onPressed: increment,
+              onPressed: () {
+                increment(null);
+              },
               child: Text('Increment'),
             ),
             OutlinedButton(
-              onPressed: decrement,
+              onPressed: () {
+                decrement(null);
+              },
               child: Text('Decrement'),
             ),
             OutlinedButton(
-              onPressed: resetCounter,
+              onPressed: () {
+                resetCounter(null);
+              },
               child: Text('Reset'),
             ),
             OutlinedButton(
@@ -62,22 +68,22 @@ class UppercaseModel {
   UppercaseModel({required this.currentText, required this.isUppercased});
 }
 
-final updateText = createIEvent<String>("update text");
+final updateText = createEvent<String>("update text");
 final toggleUppercase = createEvent("toggle uppercase");
 final resetUppercase = createEvent("reset uppercase");
 
 final uppercaseStore =
     createStore(UppercaseModel(currentText: "", isUppercased: false))
-        .onI<String>(
+        .on<String>(
           updateText,
-          (state, message) => UppercaseModel(
-            currentText: message,
+          (state, {message}) => UppercaseModel(
+            currentText: message ?? '',
             isUppercased: state.isUppercased,
           ),
         )
-        .on(
+        .on<void>(
           toggleUppercase,
-          (state) => UppercaseModel(
+          (state, {message}) => UppercaseModel(
             currentText: state.currentText,
             isUppercased: !state.isUppercased,
           ),
@@ -112,7 +118,9 @@ class UppercaseScreen extends EffectorWidget {
             ),
             SizedBox(height: 20),
             OutlinedButton(
-              onPressed: toggleUppercase,
+              onPressed: () {
+                toggleUppercase(null);
+              },
               child: Text("Toggle uppercase"),
             )
           ],

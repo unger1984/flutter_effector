@@ -1,52 +1,31 @@
 part of flutter_effector;
 
-abstract class Event {
+abstract class _EventInterface {
   String get name;
 
   @override
-  bool operator ==(other) => other is Event && other.name == name;
+  bool operator ==(other) => other is _EventInterface && other.name == name;
 
   @override
   int get hashCode => name.hashCode;
 }
 
-abstract class RegularEvent extends Event {
-  void watch(RegularEventSubscription subscription);
-  void call();
+abstract class Event<T> extends _EventInterface {
+  void watch(EventSubscription<T> subscription);
+  void call(T? intent);
 }
 
-abstract class IntentEvent<T> extends Event {
-  void watch(IntentEventSubscription<T> subscription);
-  void call(T intent);
-}
-
-class _RegularEvent extends RegularEvent {
+class _Event<T> extends Event<T> {
   final String name;
-  final _subscriptions = <RegularEventSubscription>[];
+  final _subscriptions = <EventSubscription<T>>[];
 
-  _RegularEvent(this.name);
+  _Event(this.name);
 
-  void watch(RegularEventSubscription subscription) =>
+  void watch(EventSubscription<T> subscription) =>
       _subscriptions.add(subscription);
 
-  void call() => _subscriptions.forEach((subscription) => subscription());
+  void call(T? value) =>
+      _subscriptions.forEach((subscription) => subscription(value: value));
 }
 
-class _IntentEvent<T> extends IntentEvent<T> {
-  final String name;
-  final _subscriptions = <IntentEventSubscription<T>>[];
-
-  _IntentEvent(this.name);
-
-  void watch(IntentEventSubscription<T> subscription) =>
-      _subscriptions.add(subscription);
-
-  void call(T value) =>
-      _subscriptions.forEach((subscription) => subscription(value));
-}
-
-RegularEvent createEvent([String? name]) =>
-    _RegularEvent(name ?? UniqueKey().toString());
-
-IntentEvent<T> createIEvent<T>([String? name]) =>
-    _IntentEvent<T>(name ?? UniqueKey().toString());
+Event<T> createEvent<T>(String name) => _Event<T>(name);
