@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_effector/flutter_effector/flutter_effector.dart';
+import 'package:flutter_effector/flutter_effector.dart';
 
 void main() {
   runApp(MyApp());
