@@ -46,7 +46,7 @@ class _IntentEvent<T> extends IntentEvent<T> {
 }
 
 RegularEvent createEvent([String? name]) =>
-    _RegularEvent(name ?? UniqueKey().toString());
+    _RegularEvent(name ?? nextUnitID());
 
 IntentEvent<T> createIEvent<T>([String? name]) =>
-    _IntentEvent<T>(name ?? UniqueKey().toString());
+    _IntentEvent<T>(name ?? nextUnitID());
