@@ -1,9 +1,9 @@
 part of flutter_effector;
 
 abstract class Store<State> {
-  _Store<State> on(RegularEvent event, RegularTransform<State> transform);
-  _Store<State> onI<Message>(
-      IntentEvent<Message> event, IntentTransform<State, Message> transform);
+  _Store<State> on<Message>(
+      Event<Message> event, Transform<State, Message> transform);
+
   _Store<State> reset(Event event);
   State get value;
 }
@@ -25,22 +25,21 @@ class _Store<State> extends Store<State> {
     _watchers.forEach((watcher) => watcher(_state));
   }
 
-  _Store<State> on(RegularEvent event, RegularTransform<State> transform) {
-    event.watch(() => _setState(transform(_state)));
+  _Store<State> on<Message>(Event event, Transform<State, Message> transform) {
+    event.watch((message) {
+      if (transform is _RegularTransform<State, Message>) {
+        _setState(transform(_state));
+      }
+      if (transform is _IntentTransform<State, Message>) {
+        _setState(transform(_state, message));
+      }
+    });
+
     return this;
   }
 
-  _Store<State> onI<Message>(
-      IntentEvent<Message> event, IntentTransform<State, Message> transform) {
-    event.watch((message) => _setState(transform(_state, message)));
-    return this;
-  }
-
-  _Store<State> reset(Event event) {
-    if (event is RegularEvent) {
-      event.watch(() => _setState(_initial));
-    }
-    if (event is IntentEvent) {
+  _Store<State> reset(_EventInterface event) {
+    if (event is Event) {
       event.watch((_) => _setState(_initial));
     }
     return this;
