@@ -1,0 +1,11 @@
+name: effector
+description: Fluter effector implementation.
+version: 0.0.1
+homepage:
+
+publish_to: none # TODO remove
+
+environment:
+  sdk: ">=2.13.0 <3.0.0"
+
+dependencies:

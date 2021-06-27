@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart' hide Transform;
+import 'package:flutter/material.dart';
+
+import 'package:effector/effector.dart';
 import 'package:flutter_effector/flutter_effector.dart';
 
 void main() {
@@ -10,44 +12,44 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(home: CounterScreen());
 }
 
-final increment = createEvent<void>('increment');
-final decrement = createEvent<void>('decrement');
-final resetCounter = createEvent<void>('reset counter');
+final Event<void> increment = createEvent<void>('increment');
+final Event<void> decrement = createEvent<void>('decrement');
+final Event<void> resetCounter = createEvent<void>('reset counter');
 
-final counter = createStore(0)
-    .on<void>(increment, Transform.regular((state) => state + 1))
-    .on<void>(decrement, Transform.regular((state) => state - 1))
+final Store<int> counter = createStore(0)
+    .on<void>(increment, Update<int, void>.regular((int state) => state + 1))
+    .on<void>(decrement, Update<int, void>.regular((int state) => state - 1))
     .reset(resetCounter);
 
 class CounterScreen extends EffectorWidget {
   @override
   Widget build(BuildContext context) {
-    final value = useStore(counter);
+    final int value = useStore(counter);
 
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Text(value.toString()),
             OutlinedButton(
               onPressed: increment,
-              child: Text('Increment'),
+              child: const Text('Increment'),
             ),
             OutlinedButton(
               onPressed: decrement,
-              child: Text('Decrement'),
+              child: const Text('Decrement'),
             ),
             OutlinedButton(
               onPressed: resetCounter,
-              child: Text('Reset'),
+              child: const Text('Reset'),
             ),
             OutlinedButton(
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => UppercaseScreen()),
+                MaterialPageRoute<void>(builder: (BuildContext  context) => UppercaseScreen()),
               ),
-              child: Text('Navigate to uppercase'),
+              child: const Text('Navigate to uppercase'),
             ),
           ],
         ),
@@ -57,27 +59,28 @@ class CounterScreen extends EffectorWidget {
 }
 
 class UppercaseModel {
+  UppercaseModel({required this.currentText, required this.isUppercased});
+
   final String currentText;
   final bool isUppercased;
-  UppercaseModel({required this.currentText, required this.isUppercased});
 }
 
-final updateText = createEvent<String>("update text");
-final toggleUppercase = createEvent<void>("toggle uppercase");
-final resetUppercase = createEvent<void>("reset uppercase");
+final Event<String> updateText = createEvent<String>('update text');
+final Event<void> toggleUppercase = createEvent<void>('toggle uppercase');
+final Event<void> resetUppercase = createEvent<void>('reset uppercase');
 
-final uppercaseStore =
-    createStore(UppercaseModel(currentText: "", isUppercased: false))
+final Store<UppercaseModel> uppercaseStore =
+    createStore(UppercaseModel(currentText: '', isUppercased: false))
         .on<String>(
           updateText,
-          Transform.intent((state, message) => UppercaseModel(
+          Update<UppercaseModel, String>.intent((UppercaseModel state, String message) => UppercaseModel(
                 currentText: message,
                 isUppercased: state.isUppercased,
               )),
         )
         .on<void>(
           toggleUppercase,
-          Transform.regular((state) => UppercaseModel(
+          Update<UppercaseModel, void>.regular((UppercaseModel state) => UppercaseModel(
                 currentText: state.currentText,
                 isUppercased: !state.isUppercased,
               )),
@@ -87,33 +90,33 @@ final uppercaseStore =
 class UppercaseScreen extends EffectorWidget {
   @override
   Widget build(BuildContext context) {
-    final value = useStore(uppercaseStore);
+    final UppercaseModel value = useStore(uppercaseStore);
 
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
               onChanged: updateText,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               value.isUppercased
                   ? value.currentText.toUpperCase()
                   : value.currentText,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             OutlinedButton(
               onPressed: toggleUppercase,
-              child: Text("Toggle uppercase"),
+              child: const Text('Toggle uppercase'),
             )
           ],
         ),

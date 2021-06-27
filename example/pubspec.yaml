@@ -1,5 +1,5 @@
 name: example
-description: flutter_effector example.
+description: effector example.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
@@ -12,8 +12,10 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.3
+  effector:
+    path: ../packages/effector
   flutter_effector:
-    path: ../
+    path: ../packages/flutter_effector
 
 dev_dependencies:
   flutter_test:
