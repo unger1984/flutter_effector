@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Transform;
 import 'package:flutter_effector/flutter_effector.dart';
 
 void main() {
@@ -10,13 +10,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(home: CounterScreen());
 }
 
-final increment = createEvent('increment');
-final decrement = createEvent('decrement');
-final resetCounter = createEvent('reset counter');
+final increment = createEvent<void>('increment');
+final decrement = createEvent<void>('decrement');
+final resetCounter = createEvent<void>('reset counter');
 
 final counter = createStore(0)
-    .on(increment, (state) => state + 1)
-    .on(decrement, (state) => state - 1)
+    .on<void>(increment, Transform.regular((state) => state + 1))
+    .on<void>(decrement, Transform.regular((state) => state - 1))
     .reset(resetCounter);
 
 class CounterScreen extends EffectorWidget {
@@ -62,25 +62,25 @@ class UppercaseModel {
   UppercaseModel({required this.currentText, required this.isUppercased});
 }
 
-final updateText = createIEvent<String>("update text");
-final toggleUppercase = createEvent("toggle uppercase");
-final resetUppercase = createEvent("reset uppercase");
+final updateText = createEvent<String>("update text");
+final toggleUppercase = createEvent<void>("toggle uppercase");
+final resetUppercase = createEvent<void>("reset uppercase");
 
 final uppercaseStore =
     createStore(UppercaseModel(currentText: "", isUppercased: false))
-        .onI<String>(
+        .on<String>(
           updateText,
-          (state, message) => UppercaseModel(
-            currentText: message,
-            isUppercased: state.isUppercased,
-          ),
+          Transform.intent((state, message) => UppercaseModel(
+                currentText: message,
+                isUppercased: state.isUppercased,
+              )),
         )
-        .on(
+        .on<void>(
           toggleUppercase,
-          (state) => UppercaseModel(
-            currentText: state.currentText,
-            isUppercased: !state.isUppercased,
-          ),
+          Transform.regular((state) => UppercaseModel(
+                currentText: state.currentText,
+                isUppercased: !state.isUppercased,
+              )),
         )
         .reset(resetUppercase);
 
