@@ -1,16 +1,19 @@
-part of flutter_effector;
+import 'package:flutter/material.dart';
+
+import 'package:effector/effector.dart';
 
 /// TODO: Remove this variable
-final _watchers = <EffectorWidget, _Store>{};
+final Map<EffectorWidget, Store> _watchers = <EffectorWidget, Store>{};
 
 abstract class EffectorWidget extends StatefulWidget {
-  T useStore<T>(_Store<T> store) {
+  T useStore<T>(Store<T> store) {
     _watchers[this] = store;
     return store.value;
   }
 
   Widget build(BuildContext context);
 
+  @override
   _EffectorState createState() => _EffectorState();
 }
 
