@@ -1,6 +1,6 @@
+import 'event.dart';
 import 'types.dart';
 import 'update.dart';
-import 'event.dart';
 
 abstract class Store<State> {
   factory Store(State initial) => _Store<State>(initial);
@@ -11,6 +11,8 @@ abstract class Store<State> {
   _Store<State> reset<Payload>(Event<Payload> event);
 
   State get value;
+
+  void watch(StoreSubscription<State> subscription);
 }
 
 class _Store<State> implements Store<State> {
@@ -56,10 +58,11 @@ class _Store<State> implements Store<State> {
     _watchers.forEach((StoreSubscription<State> watcher) => watcher(_state));
   }
 
+  @override
   void watch(StoreSubscription<State> subscription) =>
       _watchers.add(subscription);
 }
 
 Store<State> createStore<State>(State initial) {
-  return Store(initial);
+  return Store<State>(initial);
 }
